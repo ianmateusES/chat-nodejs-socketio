@@ -1,0 +1,23 @@
+{
+  "name": "chat-nodejs-socketio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:ianmateusES/chat-nodejs-socketio.git",
+  "author": "ianmateusES <estudo.ianmateus@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16",
+    "socket.io-client": "^4.5.1",
+    "sucrase": "^3.21.0"
+  }
+}
