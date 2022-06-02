@@ -1,5 +1,5 @@
 $(document).ready(function(){  
-  var socket = io.connect("http://localhost:3334");
+  var socket = io.connect("http://localhost:3333");
   var ready = false;
 
   $("#submit").submit(function(e) {
@@ -7,12 +7,13 @@ $(document).ready(function(){
   $("#nick").fadeOut();
   $("#chat").fadeIn();
   var name = $("#nickname").val();
+  var room = $("#room").val();
   var time = new Date();
-  $("#name").html(name);
+  $("#name").html(name + ' - ' + room);
   $("#time").html('First login: ' + time.getHours() + ':' + time.getMinutes());
 
   ready = true;
-  socket.emit("join", name);
+  socket.emit("join", {name, room});
 
 });
 

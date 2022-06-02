@@ -14,36 +14,42 @@ const io = new Socket(server, {
   }
 });
 
-const clients = {}; 
+let clients = []; 
 
 app.use(express.json());
 
 app.get('/', (req, res) => {
+  clients.map(user => user.room).filter((x, i, a) => a.indexOf(x) === i).map(room => io.to(room).emit('update', `Teste geral`))
+  
   return res.json({ msg: 'Hello world!'});
 });
 
 io.on('connection', (client) => {
-  client.on('join', (name) => {
-    console.log('Joined: ' + name);
-    clients[client.id] = name;
-    client.emit('update', 'You have connected to the server.');
-    client.broadcast.emit('update', name + ' has joined the server.')
+  client.on('join', ({ name, room}) => {
+    console.log('Entrou: ' + name);
+    clients.push({ id: client.id, name, room });
+    client.join(room);
+    client.broadcast.to(room).emit('update', `Usuário entrou - ${name}`)
   });
 
   client.on('send', (msg) => {
-    console.log('Message: ' + msg);
-    client.broadcast.emit('chat', clients[client.id], msg);
+    const user = clients.find(user => user.id === client.id)
+    client.broadcast.to(user.room).emit('chat', user.name, msg);
   });
 
   client.on('disconnect', () => {
-    console.log('Disconnect');
-    io.emit('update', clients[client.id] + ' has left the server.');
-    delete clients[client.id];
+    const user = clients.find(user => user.id === client.id);
+    if (user) {
+      console.log('Saiu: ' + user.name)
+      io.to(user.room).emit('update', `Usuário saiu - ${user.name}`);
+    }
+    
+    clients = clients.filter(user => user.id !== client.id);
   });
 })
 
-server.listen(3334);
+// server.listen(3334);
 
-app.listen(3333, () => {
+server.listen(3333, () => {
   console.log('🚀 Chat - Server started on port 3333');
 });
